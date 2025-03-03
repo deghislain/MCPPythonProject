@@ -9,7 +9,7 @@ class StockAgent:
         self.session = session
         self.result = ""
 
-    async def fetch_data(self, prompt):
+    async def gather_and_process_prompt_response(self, prompt):
         tools = await self.session.list_tools()
         available_tools = [
             {"name": tool.name, "description": tool.description, "input_schema": tool.inputSchema}
@@ -31,7 +31,7 @@ class StockAgent:
         else:
             return None
 
-    async def parse_data(self, messages, available_tools, response, client):
+    async def process_response_and_tool_calls(self, messages, available_tools, response, client):
         final_text = []
         if response:
             tool_results = []
@@ -87,5 +87,5 @@ class StockAgent:
             print("No prompt provided.")
             return
         else:
-            available_tools, messages, response, client = await self.fetch_data(prompt)
-            return await self.parse_data(messages,available_tools, response, client)
+            available_tools, messages, response, client = await self.gather_and_process_prompt_response(prompt)
+            return await self.process_response_and_tool_calls(messages,available_tools, response, client)
