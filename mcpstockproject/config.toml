@@ -1,2 +1,2 @@
 [deployment]
-  ANTHROPIC_API_KEY = "your-own-key"
+  ANTHROPIC_API_KEY = ""

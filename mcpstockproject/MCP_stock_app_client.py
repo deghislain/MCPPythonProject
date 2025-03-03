@@ -1,4 +1,7 @@
 from langchain_mcp_tools import convert_mcp_to_langchain_tools
+from langchain.chat_models import init_chat_model
+from langchain.schema import HumanMessage
+from langgraph.prebuilt import create_react_agent
 import asyncio
 import logging
 import sys
@@ -8,14 +11,6 @@ import streamlit as st
 config = load_config()
 dep_config = config["deployment"]
 
-try:
-    from langchain.chat_models import init_chat_model
-    from langchain.schema import HumanMessage
-    from langgraph.prebuilt import create_react_agent
-except ImportError as e:
-    print(f'\nError: Required package not found: {e}')
-    print('Please ensure all required packages are installed\n')
-    sys.exit(1)
 
 def init_logger() -> logging.Logger:
     logging.basicConfig(
@@ -67,7 +62,6 @@ async def get_income_statement_info(prompt: str) -> str:
         if cleanup is not None:
             await cleanup()
     return response
-
 
 
 if __name__ == "__main__":
