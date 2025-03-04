@@ -1,0 +1,6 @@
+mcp_configs:
+      stock_tools:
+        command: python
+        args:
+          - -m
+          - MCP_stock_app_server

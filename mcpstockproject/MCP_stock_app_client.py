@@ -5,7 +5,7 @@ from langgraph.prebuilt import create_react_agent
 import asyncio
 import logging
 import sys
-from utils import load_config
+from utils import load_config, read_yaml_file
 import streamlit as st
 
 config = load_config()
@@ -22,15 +22,7 @@ def init_logger() -> logging.Logger:
 
 async def get_income_statement_info(prompt: str) -> str:
     try:
-        mcp_configs = {
-            'stock_tools': {
-                'command': 'python',
-                'args': [
-                    '-m',
-                    'MCP_stock_app_server'
-                ]
-            }
-        }
+        mcp_configs = read_yaml_file("mcp_configs.yaml")['mcp_configs']
 
         tools, cleanup = await convert_mcp_to_langchain_tools(
             mcp_configs,
@@ -58,6 +50,8 @@ async def get_income_statement_info(prompt: str) -> str:
         # the last message should be an AIMessage
         response = result_messages[-1].content
 
+    except (FileNotFoundError, ValueError) as e:
+        print(e)
     finally:
         if cleanup is not None:
             await cleanup()
