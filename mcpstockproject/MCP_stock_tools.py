@@ -1,23 +1,20 @@
-import requests
 import os
+import requests
 
-from mcp.server.fastmcp import FastMCP
-mcp = FastMCP("StockApp")
 AV_STOCK_API_KEY = os.environ.get('AV_STOCK_API_KEY')
 
 
 class StockTools:
-    @mcp.tool()
-    def get_income_statement_info(stock_symbol: str) -> dict:
+    def call_stock_service_info(stock_symbol: str) -> dict:
         """
-           Retrieves the last year net income for a given stock.
+                  Retrieves the last year net income for a given stock.
 
-           Args:
-               stock_symbol: The stock symbol, e.g., "IBM".
+                  Args:
+                      stock_symbol: The stock symbol, e.g., "IBM".
 
-           Returns:
-               A dictionary containing the last income with fiscal date ending.
-           """
+                  Returns:
+                      A dictionary containing the last income with fiscal date ending.
+                  """
         print(f"Getting last year net income for {stock_symbol}")
         try:
             stock_url = f"https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={stock_symbol}&apikey={AV_STOCK_API_KEY}"
