@@ -6,6 +6,7 @@ mcp = FastMCP("StockApp")
 AV_STOCK_API_KEY = os.environ.get('AV_STOCK_API_KEY')
 
 
+@mcp.tool()
 def get_income_statement_info(stock_symbol: str) -> dict:
     """
        Retrieves the last year net income for a given stock.
