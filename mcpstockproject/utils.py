@@ -1,5 +1,6 @@
 import tomllib
 from pathlib import Path
+import random
 import yaml
 
 
@@ -27,3 +28,18 @@ def read_yaml_file(file_path):
         raise FileNotFoundError(f"The file at path '{file_path}' was not found.")
     except Exception as e:
         raise ValueError(f"Error reading YAML file: {e}")
+
+
+def store_report(report):
+    # Generate a random integer below 10
+    random_number = random.randrange(10)
+    print(random_number)
+    path = "reports/report_" + str(random_number)
+    try:
+        # Open the file in write mode
+        with open(path, 'w') as file:
+            # Write the data to the file
+            file.write(report)
+        print(f"File written successfully to {path}")
+    except Exception as e:
+        print(f"Error writing file: {e}")
