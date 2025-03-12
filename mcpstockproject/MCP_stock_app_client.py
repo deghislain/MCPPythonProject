@@ -30,9 +30,9 @@ async def get_income_statement_info(prompt: str) -> str:
         )
 
         llm = init_chat_model(
-            model="claude-3-5-sonnet-20241022",
-            model_provider='anthropic',
-            api_key=dep_config["ANTHROPIC_API_KEY"],
+            model="mistral-small-latest",
+            model_provider='mistralai',
+            api_key=dep_config["MISTRAL_API_KEY"],
             temperature=0,
             max_tokens=1000
         )

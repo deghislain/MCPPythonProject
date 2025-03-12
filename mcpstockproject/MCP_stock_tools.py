@@ -1,7 +1,7 @@
 import os
 import requests
 
-AV_STOCK_API_KEY = os.environ.get('AV_STOCK_API_KEY')
+MISTRAL_API_KEY = os.environ.get('MISTRAL_API_KEY')
 
 
 class StockTools:
@@ -17,7 +17,7 @@ class StockTools:
                   """
         print(f"Getting last year net income for {stock_symbol}")
         try:
-            stock_url = f"https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={stock_symbol}&apikey={AV_STOCK_API_KEY}"
+            stock_url = f"https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={stock_symbol}&apikey={MISTRAL_API_KEY}"
             stock_data = requests.get(stock_url)
             fiscal_date_ending = stock_data.json()["annualReports"][0]["fiscalDateEnding"]
             net_income = stock_data.json()["annualReports"][0]["netIncome"]

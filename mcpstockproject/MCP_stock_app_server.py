@@ -1,9 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 from MCP_stock_tools import StockTools as tools
-import os
 
 mcp = FastMCP("StockApp")
-AV_STOCK_API_KEY = os.environ.get('AV_STOCK_API_KEY')
 
 
 @mcp.tool()
