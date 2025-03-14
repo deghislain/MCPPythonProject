@@ -2,6 +2,14 @@ from typing import List, Dict
 import stock_service_utils as stock_dict_keys
 import os
 import requests
+from datetime import date
+from xhtml2pdf import pisa
+from markdown_it import MarkdownIt
+from io import BytesIO
+import logging
+from pathlib import Path
+
+PATH_TO_PDF = 'reports/pdf/'
 
 AV_STOCK_API_KEY = os.environ.get('AV_STOCK_API_KEY')
 
@@ -17,6 +25,22 @@ def get_dictionary_keys(key_type):
         return stock_dict_keys.get_earnings_keys()
     elif key_type == 'insiders_tx':
         return stock_dict_keys.get_insider_tx_keys()
+
+
+def markdown_to_pdf(md_content: str) -> bytes:
+    """
+    Convert markdown to a PDF file using Pisa.
+
+    :param md_content: Markdown content to convert
+    :return: Bytes containing the generated PDF
+    """
+    md = MarkdownIt()
+    html_content = md.render(md_content)
+    pdf_output = BytesIO()
+    pisa.CreatePDF(html_content, dest=pdf_output, encoding='utf-8')
+    pdf_output.seek(0)  # Reset file pointer to beginning of PDF data
+
+    return pdf_output.getvalue()
 
 
 def retrieve_stock_last_3years_info(stock_data, key_type, info_type) -> List[Dict]:
@@ -164,7 +188,8 @@ class StockTools:
 
             for count in range(12):
                 try:
-                    week_dict ={previous_refresh: {key: weekly_adjusted_data[previous_refresh][key] for key in stock_dict_keys.get_weekly_adjusted_keys()}}
+                    week_dict = {previous_refresh: {key: weekly_adjusted_data[previous_refresh][key] for key in
+                                                    stock_dict_keys.get_weekly_adjusted_keys()}}
                     last_quarter.append(week_dict)
                     previous_refresh = stock_dict_keys.get_date_one_week_ago(previous_refresh)
                 except Exception as e:
@@ -175,3 +200,35 @@ class StockTools:
             print(f"Error fetching stock data: {e}")
             return []
 
+    def generate_pdf(analyze_doc: str) -> None:
+        """
+        Generate a PDF from the provided markdown content.
+
+        :param analyze_doc: The markdown content to convert into a PDF
+        """
+        # Path configuration
+        PDF_OUTPUT_DIR = Path('reports/pdf')
+        PDF_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+        print("generate_pdf: Start")
+
+        # Get today's date and format PDF name
+        today = date.today().strftime("%Y%m%d")
+        pdf_name = f"{today}_stock_report.pdf"
+
+        pdf_path = PDF_OUTPUT_DIR / pdf_name
+
+        try:
+            # Convert markdown to PDF bytes
+            pdf_content = markdown_to_pdf(analyze_doc)
+
+            # Save PDF bytes to a file
+            with open(pdf_path, "wb") as pdf_file:
+                pdf_file.write(pdf_content)
+
+            print("generate_pdf: Successfully generated PDF at", str(pdf_path))
+
+        except FileExistsError as ex:
+            logging.error(f"Error: PDF file already exists - {ex}")
+        except Exception as ex:
+            logging.error(f"Unexpected error while generating PDF: {ex}")

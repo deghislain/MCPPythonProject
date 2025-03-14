@@ -1,6 +1,6 @@
 from mcp.server.fastmcp import FastMCP
 from MCP_stock_tools import StockTools as tools
-from MCP_stock_prompt import get_system_prompt
+from MCP_stock_prompt import get_report_prompt, get_analyse_prompt
 from typing import List, Dict
 
 mcp = FastMCP("StockApp")
@@ -95,11 +95,26 @@ def get_weekly_adjusted_info(stock_symbol: str) -> List[Dict]:
 
     return tools.call_weekly_adjusted_info_service(stock_symbol)
 
+@mcp.tool()
+def generate_pdf_doc(analyze_doc: str) -> None:
+    """
+    Generate a PDF from the provided markdown content.
+
+    :param analyze_doc: The markdown content to convert into a PDF
+    """
+
+    return tools.generate_pdf(analyze_doc)
+
 
 @mcp.prompt()
-def get_stock_system_prompt() -> str:
-    """ Returns the system prompt """
-    return get_system_prompt()
+def get_report_system_prompt() -> str:
+    """ Returns the system report prompt """
+    return get_report_prompt()
+
+@mcp.prompt()
+def get_analyse_system_prompt() -> str:
+    """ Returns the system analyse prompt """
+    return get_analyse_prompt()
 
 
 if __name__ == "__main__":
