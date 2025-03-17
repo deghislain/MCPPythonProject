@@ -200,14 +200,15 @@ class StockTools:
             print(f"Error fetching stock data: {e}")
             return []
 
-    def generate_pdf(analyze_doc: str) -> None:
+    def generate_pdf(analyze_doc: str, stock_symbol: str) -> None:
         """
         Generate a PDF from the provided markdown content.
-
-        :param analyze_doc: The markdown content to convert into a PDF
+         Args:
+               stock_symbol: The stock symbol, e.g., "IBM".
+               analyze_doc: The markdown content to convert into a PDF
         """
         # Path configuration
-        PDF_OUTPUT_DIR = Path('reports/pdf')
+        PDF_OUTPUT_DIR = Path(f'reports/{stock_symbol}')
         PDF_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
         print("generate_pdf: Start")
@@ -217,6 +218,7 @@ class StockTools:
         pdf_name = f"{today}_stock_report.pdf"
 
         pdf_path = PDF_OUTPUT_DIR / pdf_name
+        print("***************************************", PDF_OUTPUT_DIR)
 
         try:
             # Convert markdown to PDF bytes

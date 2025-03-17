@@ -96,14 +96,15 @@ def get_weekly_adjusted_info(stock_symbol: str) -> List[Dict]:
     return tools.call_weekly_adjusted_info_service(stock_symbol)
 
 @mcp.tool()
-def generate_pdf_doc(analyze_doc: str) -> None:
+def generate_pdf_doc(analyze_doc: str, stock_symbol: str) -> None:
     """
-    Generate a PDF from the provided markdown content.
-
-    :param analyze_doc: The markdown content to convert into a PDF
+     Generate a PDF from the provided markdown content.
+         Args:
+               stock_symbol: The stock symbol, e.g., "IBM".
+               analyze_doc: The markdown content to convert into a PDF
     """
 
-    return tools.generate_pdf(analyze_doc)
+    return tools.generate_pdf(analyze_doc, stock_symbol)
 
 
 @mcp.prompt()

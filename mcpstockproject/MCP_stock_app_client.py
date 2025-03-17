@@ -20,7 +20,7 @@ def init_logger() -> logging.Logger:
     return logging.getLogger()
 
 
-async def write_financial_report(tools, prompt) -> str:
+async def write_financial_report(tools, stock_symbol) -> str:
     llm = init_chat_model(
         model="claude-3-5-sonnet-20241022",
         model_provider='anthropic',
@@ -41,7 +41,7 @@ async def write_financial_report(tools, prompt) -> str:
             content=system_prompt.messages[0].content.text
         ),
         HumanMessage(
-            content=prompt
+            content=stock_symbol
         )
     ]
 
@@ -52,9 +52,10 @@ async def write_financial_report(tools, prompt) -> str:
     return result_messages[-1].content
 
 
-async def perform_financial_analyze(financial_report, tools) -> str:
-    prompt = f"""Perform a comprehensive financial analysis of the company based on the provided financial report, 
-    highlighting key trends, strengths, weaknesses, and areas for improvement. Here is the financial report{financial_report}"""
+async def perform_financial_analyze(financial_report, tools, stock_symbol) -> str:
+    prompt = f"""Perform a comprehensive financial analysis for this stock: {stock_symbol}.
+    Your analyse must be based on the provided financial report. Ensure you highlighting key trends,
+     strengths, weaknesses, and areas for improvement. Here is the financial report{financial_report}"""
 
     llm = init_chat_model(
         model="claude-3-5-sonnet-20241022",
@@ -87,7 +88,7 @@ async def perform_financial_analyze(financial_report, tools) -> str:
     return result_messages[-1].content
 
 
-async def get_stock_info(prompt: str) -> str:
+async def get_stock_info(stock_symbol: str) -> str:
     mcp_configs = read_yaml_file("mcp_configs.yaml")['mcp_configs']
 
     tools, cleanup = await convert_mcp_to_langchain_tools(
@@ -96,8 +97,8 @@ async def get_stock_info(prompt: str) -> str:
     )
     response = None
     try:
-        financial_report = await write_financial_report(tools, prompt)
-        response = await perform_financial_analyze(financial_report, tools)
+        financial_report = await write_financial_report(tools, stock_symbol)
+        response = await perform_financial_analyze(financial_report, tools, stock_symbol)
     except (FileNotFoundError, ValueError) as e:
         print(e)
     finally:
@@ -110,6 +111,5 @@ if __name__ == "__main__":
     symbol = st.text_input(':blue[Enter a stock symbol:]')
     submit_btn = st.button("Submit")
     if symbol and submit_btn:
-        prompt = symbol
-        result = asyncio.run(get_stock_info(prompt))
+        result = asyncio.run(get_stock_info(symbol))
         st.write(result)
